@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d1523" />
+    <meta name="description" content="Benchmark local de inferência WebGPU para o ComCore." />
+    <title>ComCore | Benchmark WebGPU</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="heading">
+        <div class="eyebrow"><span class="dot"></span> Laboratório de desempenho · ComCore</div>
+        <h1>Benchmark de IA local <span>no navegador</span></h1>
+        <p>Teste o Qwen3.5-2B na GPU do seu dispositivo usando WebGPU. Nenhuma geração de texto é enviada à API do ComCore.</p>
+      </header>
+
+      <section class="grid two" aria-label="Ambiente e modelo">
+        <article class="panel">
+          <h2>01. Ambiente</h2>
+          <dl class="facts">
+            <div><dt>WebGPU</dt><dd id="webgpu">Verificando…</dd></div>
+            <div><dt>GPU / Adaptador</dt><dd id="gpu">Verificando…</dd></div>
+            <div><dt>Plataforma</dt><dd id="platform">—</dd></div>
+            <div><dt>Memória estimada do dispositivo</dt><dd id="memory">—</dd></div>
+            <div><dt>Precisão FP16</dt><dd id="fp16">—</dd></div>
+          </dl>
+          <p class="hint">A memória informada pelo navegador é estimada, não é a RAM livre nem a VRAM disponível.</p>
+        </article>
+        <article class="panel">
+          <h2>02. Modelo</h2>
+          <label for="model">Selecionar modelo</label>
+          <select id="model">
+            <option value="onnx-community/Qwen3.5-2B-ONNX-OPT">Qwen3.5-2B (principal)</option>
+            <option value="onnx-community/Qwen3.5-0.8B-ONNX-OPT">Qwen3.5-0.8B (comparação)</option>
+          </select>
+          <button class="primary" id="load" type="button" disabled>Carregar modelo no dispositivo</button>
+          <div class="loading-row"><span id="model-state" role="status">Aguardando verificação da GPU.</span><span id="progress-num"></span></div>
+          <progress id="progress" max="100" value="0" hidden></progress>
+          <p class="hint">No primeiro uso haverá download de arquivos grandes. Use Wi-Fi e mantenha a aba aberta. O carregamento pode exceder a memória disponível.</p>
+        </article>
+      </section>
+
+      <section class="panel" aria-label="Teste de inferência">
+        <div class="split"><h2>03. Inferência</h2><span class="status" id="run-state">Modelo não carregado</span></div>
+        <label for="preset">Prompt de teste</label>
+        <select id="preset">
+          <option value="short">Curto · definição em português</option>
+          <option value="dialog">Médio · resposta em português</option>
+          <option value="custom">Personalizado</option>
+        </select>
+        <textarea id="prompt" rows="3" maxlength="5000" aria-label="Texto do prompt">Explique em português brasileiro, em duas frases, o que é uma API REST.</textarea>
+        <div class="controls">
+          <div class="field"><label for="max-tokens">Máximo de novos tokens</label><select id="max-tokens"><option value="64">64</option><option value="128" selected>128</option><option value="256">256</option></select></div>
+          <button class="primary" id="run" type="button" disabled>Executar benchmark</button>
+        </div>
+        <div class="response-title">Saída gerada</div>
+        <pre id="response" class="response" aria-live="polite">A resposta aparecerá aqui.</pre>
+        <p id="error" class="error" hidden></p>
+      </section>
+
+      <section class="grid metrics" aria-label="Métricas do último teste">
+        <article class="metric"><span>Tempo até 1º token</span><strong id="ttft">—</strong><small>TTFT · sem contar download</small></article>
+        <article class="metric"><span>Velocidade de geração</span><strong id="tps">—</strong><small>Tokens/s após 1º token</small></article>
+        <article class="metric"><span>Tempo total</span><strong id="total">—</strong><small>Somente geração</small></article>
+        <article class="metric"><span>Tokens produzidos</span><strong id="tokens">—</strong><small>Contagem do streamer</small></article>
+      </section>
+
+      <section class="panel" aria-label="Histórico e exportação">
+        <div class="split"><h2>04. Resultados desta sessão</h2><button id="export" type="button" class="secondary" disabled>Exportar JSON</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Modelo</th><th>Prompt</th><th>TTFT</th><th>tokens/s</th><th>Total</th></tr></thead><tbody id="history"><tr><td colspan="5" class="empty">Sem testes realizados</td></tr></tbody></table></div>
+        <p class="hint">A exportação contém métricas e dados técnicos do navegador, não inclui o prompt nem a resposta. Os dados não são enviados a nenhum servidor por esta página.</p>
+      </section>
+      <footer>Ferramenta experimental, não integrada ao ComCore. Não use relatos pessoais ou dados sensíveis nos testes. Resultados locais não aprovam um modelo para atendimento de saúde mental.</footer>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
